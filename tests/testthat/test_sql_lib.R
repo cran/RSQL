@@ -7,6 +7,8 @@ test_that("sql_lib basic test", {
     #dbWriteTable(rsql$conn, name = "mtcars", mtcars, overwrite = TRUE)
     expect_equal(dbListTables(rsql$conn), "mtcars")
 
+    db.name <- getMtcarsdbPath()
+    rsql <- createRSQL(drv = RSQLite::SQLite(), dbname = db.name)
     query_sql <- rsql$gen_select(
         select_fields = c("*"),
         table = "mtcars")
@@ -94,7 +96,7 @@ test_that("sql_lib select, insert and delete with dataframe", {
                                  where_values = where_values,
                                  distinct = TRUE)
     check_df <- rsql$execute_select(check_sql)
-    expect_equal(check_df %>% group_by(mpg, cyl), update_values)
+    expect_equivalent(check_df %>% dplyr::group_by(mpg, cyl), update_values)
 
     delete.sql <- rsql$gen_delete("mtcars", c("mpg"), c("1"))
     rsql$execute_delete(delete.sql)
@@ -146,6 +148,13 @@ test_that("retrieveInsert", {
         rsql$retrieve_insert(table = "retrieveInsert", values_uk = values.uk,
                              values = values.color, field_id = "vehicle_id")
     expect_equal(1, vehicle.id.observed)
+})
+
+test_that("update symbols", {
+    update.pk <- data.frame(pk = 1, stringsAsFactors = FALSE)
+    update.values <- data.frame(field.1 = "a", field.2 = "b", field.3 = NA, stringsAsFactors = FALSE)
+    observed.update <- sql_gen_update("foo", values = update.values, where_values = update.pk)
+    expect_equal(observed.update, "update foo set (field.1,field.2,field.3)=('a','b',NULL) where (pk) in  ( 1 )")
 })
 
 rsql$disconnect()
