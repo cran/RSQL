@@ -1,8 +1,8 @@
-#install.packages("pkgnet")
+# install.packages("pkgnet")
 library(pkgnet)
 report2 <- CreatePackageReport(
   pkg_name = "RSQL"
-  #, pkg_path = <path to the repo>
+  # , pkg_path = <path to the repo>
 )
 
 

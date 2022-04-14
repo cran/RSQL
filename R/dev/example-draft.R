@@ -3,7 +3,7 @@ rsql <- createRSQL(drv = RSQLite::SQLite(), dbname = db.name)
 
 where_values_df <- data.frame(carb = 8, stringsAsFactors = FALSE)
 select_sql <- rsql$gen_select(
-  select_fields = "*", #c("wt", "qsec"),
+  select_fields = "*", # c("wt", "qsec"),
   table = "mtcars",
   where_values = where_values_df
 )
@@ -16,7 +16,7 @@ rsql$execute_insert(sql_insert = insert_sql)
 
 where_values_df <- data.frame(carb = 9, stringsAsFactors = FALSE)
 select_sql <- rsql$gen_select(
-  select_fields = "*", #c("wt", "qsec"),
+  select_fields = "*", # c("wt", "qsec"),
   table = "mtcars",
   where_values = where_values_df
 )

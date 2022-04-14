@@ -8,29 +8,30 @@ This class is intended to simplify SQL commands.
 }
 \examples{
 library(RSQL)
+library(RSQLite)
 db.name <- getMtcarsdbPath(copy = TRUE)
 rsql <- createRSQL(drv = RSQLite::SQLite(), dbname = db.name)
-where_values_df <- data.frame(carb = 8, stringsAsFactors = FALSE)
 select_sql <- rsql$gen_select(
- select_fields = "*", #c("wt", "qsec"),
- table = "mtcars",
- where_values = where_values_df)
+  select_fields = "*", # c("wt", "qsec"),
+  table = "mtcars",
+  where_values = data.frame(carb = 8)
+)
 mtcars.observed <- rsql$execute_select(select_sql)
- mtcars.observed
+mtcars.observed
 
- mtcars.new <- mtcars.observed
+mtcars.new <- mtcars.observed
 mtcars.new$carb <- 9
 insert_sql <- rsql$gen_insert(table = "mtcars", values_df = mtcars.new)
 rsql$execute_insert(sql_insert = insert_sql)
 
-where_values_df <- data.frame(carb = 9, stringsAsFactors = FALSE)
+where_values_df <- data.frame(carb = 9)
 select_sql <- rsql$gen_select(
-  select_fields = "*", #c("wt", "qsec"),
- table = "mtcars",
- where_values = where_values_df)
+  select_fields = "*", # c("wt", "qsec"),
+  table = "mtcars",
+  where_values = data.frame(carb = 8)
+)
 mtcars.observed <- rsql$execute_select(select_sql)
 mtcars.observed
-
 }
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}
@@ -39,6 +40,14 @@ mtcars.observed
 
 \item{\code{db.name}}{database name}
 
+\item{\code{db}}{user}
+
+\item{\code{db}}{user password}
+
+\item{\code{db}}{host}
+
+\item{\code{db}}{host port}
+
 \item{\code{available.functions}}{for generating select expressions}
 
 \item{\code{entity.field.regexp}}{for scrape a field or table expression}
@@ -46,6 +55,8 @@ mtcars.observed
 \item{\code{entity.select.regexp}}{for scrape a select expressions expression}
 
 \item{\code{conn}}{The connection handler}
+
+\item{\code{valid.conn}}{Checks if connection is valid}
 
 \item{\code{last.query}}{The last query}
 
@@ -63,10 +74,24 @@ mtcars.observed
 }
 \if{html}{\out{</div>}}
 }
+\section{Active bindings}{
+\if{html}{\out{<div class="r6-active-bindings">}}
+\describe{
+\item{\code{db}}{user}
+
+\item{\code{db}}{user password}
+
+\item{\code{db}}{host}
+
+\item{\code{db}}{host port}
+}
+\if{html}{\out{</div>}}
+}
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{
 \item \href{#method-new}{\code{RSQL.class$new()}}
+\item \href{#method-connect}{\code{RSQL.class$connect()}}
 \item \href{#method-setupRegexp}{\code{RSQL.class$setupRegexp()}}
 \item \href{#method-finalize}{\code{RSQL.class$finalize()}}
 \item \href{#method-checkEntitiesNames}{\code{RSQL.class$checkEntitiesNames()}}
@@ -77,6 +102,7 @@ mtcars.observed
 \item \href{#method-execute_select}{\code{RSQL.class$execute_select()}}
 \item \href{#method-execute_update}{\code{RSQL.class$execute_update()}}
 \item \href{#method-execute_insert}{\code{RSQL.class$execute_insert()}}
+\item \href{#method-execute_get_insert}{\code{RSQL.class$execute_get_insert()}}
 \item \href{#method-execute_command}{\code{RSQL.class$execute_command()}}
 \item \href{#method-execute_delete}{\code{RSQL.class$execute_delete()}}
 \item \href{#method-retrieve}{\code{RSQL.class$retrieve()}}
@@ -117,6 +143,19 @@ Initializes a connection
 \item{\code{port}}{port number}
 }
 \if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-connect"></a>}}
+\if{latex}{\out{\hypertarget{method-connect}{}}}
+\subsection{Method \code{connect()}}{
+Function which connects to database
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{RSQL.class$connect()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+conn object
 }
 }
 \if{html}{\out{<hr>}}
@@ -337,6 +376,25 @@ Performs an insert on the database
 }
 }
 \if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-execute_get_insert"></a>}}
+\if{latex}{\out{\hypertarget{method-execute_get_insert}{}}}
+\subsection{Method \code{execute_get_insert()}}{
+Performs a select statement, if not exists, executes insert statement
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{RSQL.class$execute_get_insert(sql_select, sql_insert)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{sql_select}}{the sql select statement to perform}
+
+\item{\code{sql_insert}}{the sql insert statement to perform}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-execute_command"></a>}}
 \if{latex}{\out{\hypertarget{method-execute_command}{}}}
 \subsection{Method \code{execute_command()}}{
@@ -415,7 +473,7 @@ Obtain id if object exists on the database. Insert object if not.
   fields_uk = names(values_uk),
   values_uk,
   fields = names(values),
-  values,
+  values = data.frame(),
   field_id = "id"
 )}\if{html}{\out{</div>}}
 }
