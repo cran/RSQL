@@ -2,7 +2,7 @@ Package: RSQL
 Type: Package
 Title: Database Agnostic Package to Generate and Process 'SQL' Queries
         in R
-Version: 0.2.0
+Version: 0.2.1
 Language: en-US
 Authors@R: c(
     person("Alejandro", "Baranek",,"abaranek@dc.uba.ar", c("cre", "aut")),
@@ -12,7 +12,7 @@ Description: Allows the user to generate and execute select, insert, update and 
 License: MIT + file LICENSE
 Encoding: UTF-8
 RoxygenNote: 7.1.2
-Collate: 'sql-lib.R' 'zzz.R'
+Collate: 'sql-lib.R' 'util-lib.R' 'zzz.R'
 Imports: lgr, R6, DBI
 Suggests: RSQLite, knitr, rmarkdown, dplyr, testthat, covr, lintr,
         pkgdown
@@ -20,8 +20,8 @@ VignetteBuilder: knitr
 BugReports: https://github.com/rOpenStats/RSQL/issues
 URL: https://github.com/rOpenStats/RSQL
 NeedsCompilation: no
-Packaged: 2022-04-14 10:51:35 UTC; kenarab
+Packaged: 2022-05-20 23:27:25 UTC; kenarab
 Author: Alejandro Baranek [cre, aut],
   Leonardo Belen [aut]
 Repository: CRAN
-Date/Publication: 2022-04-14 11:12:29 UTC
+Date/Publication: 2022-05-21 06:20:02 UTC

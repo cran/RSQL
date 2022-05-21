@@ -3,6 +3,9 @@
 
 # RSQL
 
+[![Downloads](http://cranlogs.r-pkg.org/badges/RSQL?color=brightgreen)](https://www.r-pkg.org:443/pkg/RSQL)
+[![Downloads](http://cranlogs.r-pkg.org/badges/grand-total/RSQL?color=brightgreen)](https://www.r-pkg.org:443/pkg/RSQL)
+
 <!-- Database Agnostic Package to Generate and Process 'SQL' Queries in R. -->
 
 Allows the user to generate and execute select, insert, update and
