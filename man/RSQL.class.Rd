@@ -79,6 +79,8 @@ ken4rab
 
 \item{\code{clear.rs.counter}}{An instance clear.rs.counter}
 
+\item{\code{tz}}{local timezone}
+
 \item{\code{logger}}{is conigured logger for current class}
 }
 \if{html}{\out{</div>}}
@@ -86,33 +88,34 @@ ken4rab
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{
-\item \href{#method-new}{\code{RSQL.class$new()}}
-\item \href{#method-connect}{\code{RSQL.class$connect()}}
-\item \href{#method-setupResultClassFromDriver}{\code{RSQL.class$setupResultClassFromDriver()}}
-\item \href{#method-setupRegexp}{\code{RSQL.class$setupRegexp()}}
-\item \href{#method-finalize}{\code{RSQL.class$finalize()}}
-\item \href{#method-checkEntitiesNames}{\code{RSQL.class$checkEntitiesNames()}}
-\item \href{#method-gen_select}{\code{RSQL.class$gen_select()}}
-\item \href{#method-gen_insert}{\code{RSQL.class$gen_insert()}}
-\item \href{#method-gen_update}{\code{RSQL.class$gen_update()}}
-\item \href{#method-gen_delete}{\code{RSQL.class$gen_delete()}}
-\item \href{#method-execute_select}{\code{RSQL.class$execute_select()}}
-\item \href{#method-execute_update}{\code{RSQL.class$execute_update()}}
-\item \href{#method-execute_insert}{\code{RSQL.class$execute_insert()}}
-\item \href{#method-execute_get_insert}{\code{RSQL.class$execute_get_insert()}}
-\item \href{#method-execute_command}{\code{RSQL.class$execute_command()}}
-\item \href{#method-execute_delete}{\code{RSQL.class$execute_delete()}}
-\item \href{#method-retrieve}{\code{RSQL.class$retrieve()}}
-\item \href{#method-retrieve_insert}{\code{RSQL.class$retrieve_insert()}}
-\item \href{#method-clearLastResult}{\code{RSQL.class$clearLastResult()}}
-\item \href{#method-getSummary}{\code{RSQL.class$getSummary()}}
-\item \href{#method-disconnect}{\code{RSQL.class$disconnect()}}
-\item \href{#method-clone}{\code{RSQL.class$clone()}}
+\item \href{#method-RSQL-new}{\code{RSQL.class$new()}}
+\item \href{#method-RSQL-checkConnection}{\code{RSQL.class$checkConnection()}}
+\item \href{#method-RSQL-connect}{\code{RSQL.class$connect()}}
+\item \href{#method-RSQL-setupResultClassFromDriver}{\code{RSQL.class$setupResultClassFromDriver()}}
+\item \href{#method-RSQL-setupRegexp}{\code{RSQL.class$setupRegexp()}}
+\item \href{#method-RSQL-finalize}{\code{RSQL.class$finalize()}}
+\item \href{#method-RSQL-checkEntitiesNames}{\code{RSQL.class$checkEntitiesNames()}}
+\item \href{#method-RSQL-gen_select}{\code{RSQL.class$gen_select()}}
+\item \href{#method-RSQL-gen_insert}{\code{RSQL.class$gen_insert()}}
+\item \href{#method-RSQL-gen_update}{\code{RSQL.class$gen_update()}}
+\item \href{#method-RSQL-gen_delete}{\code{RSQL.class$gen_delete()}}
+\item \href{#method-RSQL-execute_select}{\code{RSQL.class$execute_select()}}
+\item \href{#method-RSQL-execute_update}{\code{RSQL.class$execute_update()}}
+\item \href{#method-RSQL-execute_insert}{\code{RSQL.class$execute_insert()}}
+\item \href{#method-RSQL-execute_get_insert}{\code{RSQL.class$execute_get_insert()}}
+\item \href{#method-RSQL-execute_command}{\code{RSQL.class$execute_command()}}
+\item \href{#method-RSQL-execute_delete}{\code{RSQL.class$execute_delete()}}
+\item \href{#method-RSQL-retrieve}{\code{RSQL.class$retrieve()}}
+\item \href{#method-RSQL-retrieve_insert}{\code{RSQL.class$retrieve_insert()}}
+\item \href{#method-RSQL-clearLastResult}{\code{RSQL.class$clearLastResult()}}
+\item \href{#method-RSQL-getSummary}{\code{RSQL.class$getSummary()}}
+\item \href{#method-RSQL-disconnect}{\code{RSQL.class$disconnect()}}
+\item \href{#method-RSQL-clone}{\code{RSQL.class$clone()}}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-new"></a>}}
-\if{latex}{\out{\hypertarget{method-new}{}}}
+\if{html}{\out{<a id="method-RSQL-new"></a>}}
+\if{latex}{\out{\hypertarget{method-RSQL-new}{}}}
 \subsection{Method \code{new()}}{
 Initializes a connection
 \subsection{Usage}{
@@ -122,7 +125,8 @@ Initializes a connection
   user = NULL,
   password = NULL,
   host = NULL,
-  port = NULL
+  port = NULL,
+  tz = Sys.timezone()
 )}\if{html}{\out{</div>}}
 }
 
@@ -140,13 +144,28 @@ Initializes a connection
 \item{\code{host}}{host name}
 
 \item{\code{port}}{port number}
+
+\item{\code{tz}}{actual time zone}
 }
 \if{html}{\out{</div>}}
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-connect"></a>}}
-\if{latex}{\out{\hypertarget{method-connect}{}}}
+\if{html}{\out{<a id="method-RSQL-checkConnection"></a>}}
+\if{latex}{\out{\hypertarget{method-RSQL-checkConnection}{}}}
+\subsection{Method \code{checkConnection()}}{
+Function which check if db connection is valid
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{RSQL.class$checkConnection()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+conn object
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-RSQL-connect"></a>}}
+\if{latex}{\out{\hypertarget{method-RSQL-connect}{}}}
 \subsection{Method \code{connect()}}{
 Function which connects to database
 \subsection{Usage}{
@@ -158,8 +177,8 @@ conn object
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-setupResultClassFromDriver"></a>}}
-\if{latex}{\out{\hypertarget{method-setupResultClassFromDriver}{}}}
+\if{html}{\out{<a id="method-RSQL-setupResultClassFromDriver"></a>}}
+\if{latex}{\out{\hypertarget{method-RSQL-setupResultClassFromDriver}{}}}
 \subsection{Method \code{setupResultClassFromDriver()}}{
 Infer ResultsClass from corresponding driver. Implemented for SQLiteDriver & PqConnection
 \subsection{Usage}{
@@ -171,8 +190,8 @@ RSQL object
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-setupRegexp"></a>}}
-\if{latex}{\out{\hypertarget{method-setupRegexp}{}}}
+\if{html}{\out{<a id="method-RSQL-setupRegexp"></a>}}
+\if{latex}{\out{\hypertarget{method-RSQL-setupRegexp}{}}}
 \subsection{Method \code{setupRegexp()}}{
 initialize regexp for scraping entities
 \subsection{Usage}{
@@ -191,8 +210,8 @@ regexp for scraping select expressions
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-finalize"></a>}}
-\if{latex}{\out{\hypertarget{method-finalize}{}}}
+\if{html}{\out{<a id="method-RSQL-finalize"></a>}}
+\if{latex}{\out{\hypertarget{method-RSQL-finalize}{}}}
 \subsection{Method \code{finalize()}}{
 Class destructor
 \subsection{Usage}{
@@ -201,8 +220,8 @@ Class destructor
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-checkEntitiesNames"></a>}}
-\if{latex}{\out{\hypertarget{method-checkEntitiesNames}{}}}
+\if{html}{\out{<a id="method-RSQL-checkEntitiesNames"></a>}}
+\if{latex}{\out{\hypertarget{method-RSQL-checkEntitiesNames}{}}}
 \subsection{Method \code{checkEntitiesNames()}}{
 Checks if an entity exists
 \subsection{Usage}{
@@ -220,8 +239,8 @@ Checks if an entity exists
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-gen_select"></a>}}
-\if{latex}{\out{\hypertarget{method-gen_select}{}}}
+\if{html}{\out{<a id="method-RSQL-gen_select"></a>}}
+\if{latex}{\out{\hypertarget{method-RSQL-gen_select}{}}}
 \subsection{Method \code{gen_select()}}{
 Generates a select
 \subsection{Usage}{
@@ -260,8 +279,8 @@ Generates a select
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-gen_insert"></a>}}
-\if{latex}{\out{\hypertarget{method-gen_insert}{}}}
+\if{html}{\out{<a id="method-RSQL-gen_insert"></a>}}
+\if{latex}{\out{\hypertarget{method-RSQL-gen_insert}{}}}
 \subsection{Method \code{gen_insert()}}{
 Generate  insert statement
 \subsection{Usage}{
@@ -281,8 +300,8 @@ Generate  insert statement
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-gen_update"></a>}}
-\if{latex}{\out{\hypertarget{method-gen_update}{}}}
+\if{html}{\out{<a id="method-RSQL-gen_update"></a>}}
+\if{latex}{\out{\hypertarget{method-RSQL-gen_update}{}}}
 \subsection{Method \code{gen_update()}}{
 Generate  insert statement
 \subsection{Usage}{
@@ -312,8 +331,8 @@ Generate  insert statement
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-gen_delete"></a>}}
-\if{latex}{\out{\hypertarget{method-gen_delete}{}}}
+\if{html}{\out{<a id="method-RSQL-gen_delete"></a>}}
+\if{latex}{\out{\hypertarget{method-RSQL-gen_delete}{}}}
 \subsection{Method \code{gen_delete()}}{
 Generate a delete statement
 \subsection{Usage}{
@@ -337,8 +356,8 @@ Generate a delete statement
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-execute_select"></a>}}
-\if{latex}{\out{\hypertarget{method-execute_select}{}}}
+\if{html}{\out{<a id="method-RSQL-execute_select"></a>}}
+\if{latex}{\out{\hypertarget{method-RSQL-execute_select}{}}}
 \subsection{Method \code{execute_select()}}{
 Performs an execution on the database
 \subsection{Usage}{
@@ -354,8 +373,8 @@ Performs an execution on the database
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-execute_update"></a>}}
-\if{latex}{\out{\hypertarget{method-execute_update}{}}}
+\if{html}{\out{<a id="method-RSQL-execute_update"></a>}}
+\if{latex}{\out{\hypertarget{method-RSQL-execute_update}{}}}
 \subsection{Method \code{execute_update()}}{
 Performs an update on the database
 \subsection{Usage}{
@@ -371,8 +390,8 @@ Performs an update on the database
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-execute_insert"></a>}}
-\if{latex}{\out{\hypertarget{method-execute_insert}{}}}
+\if{html}{\out{<a id="method-RSQL-execute_insert"></a>}}
+\if{latex}{\out{\hypertarget{method-RSQL-execute_insert}{}}}
 \subsection{Method \code{execute_insert()}}{
 Performs an insert on the database
 \subsection{Usage}{
@@ -388,8 +407,8 @@ Performs an insert on the database
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-execute_get_insert"></a>}}
-\if{latex}{\out{\hypertarget{method-execute_get_insert}{}}}
+\if{html}{\out{<a id="method-RSQL-execute_get_insert"></a>}}
+\if{latex}{\out{\hypertarget{method-RSQL-execute_get_insert}{}}}
 \subsection{Method \code{execute_get_insert()}}{
 Performs a select statement, if not exists, executes insert statement
 \subsection{Usage}{
@@ -407,8 +426,8 @@ Performs a select statement, if not exists, executes insert statement
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-execute_command"></a>}}
-\if{latex}{\out{\hypertarget{method-execute_command}{}}}
+\if{html}{\out{<a id="method-RSQL-execute_command"></a>}}
+\if{latex}{\out{\hypertarget{method-RSQL-execute_command}{}}}
 \subsection{Method \code{execute_command()}}{
 Performs a command on the database
 \subsection{Usage}{
@@ -424,8 +443,8 @@ Performs a command on the database
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-execute_delete"></a>}}
-\if{latex}{\out{\hypertarget{method-execute_delete}{}}}
+\if{html}{\out{<a id="method-RSQL-execute_delete"></a>}}
+\if{latex}{\out{\hypertarget{method-RSQL-execute_delete}{}}}
 \subsection{Method \code{execute_delete()}}{
 Performs an deletion on the database
 \subsection{Usage}{
@@ -441,8 +460,8 @@ Performs an deletion on the database
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-retrieve"></a>}}
-\if{latex}{\out{\hypertarget{method-retrieve}{}}}
+\if{html}{\out{<a id="method-RSQL-retrieve"></a>}}
+\if{latex}{\out{\hypertarget{method-RSQL-retrieve}{}}}
 \subsection{Method \code{retrieve()}}{
 Performs an insert on the database. This is a composite function
 \subsection{Usage}{
@@ -475,8 +494,8 @@ Performs an insert on the database. This is a composite function
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-retrieve_insert"></a>}}
-\if{latex}{\out{\hypertarget{method-retrieve_insert}{}}}
+\if{html}{\out{<a id="method-RSQL-retrieve_insert"></a>}}
+\if{latex}{\out{\hypertarget{method-RSQL-retrieve_insert}{}}}
 \subsection{Method \code{retrieve_insert()}}{
 Obtain id if object exists on the database. Insert object if not.
 \subsection{Usage}{
@@ -509,8 +528,8 @@ Obtain id if object exists on the database. Insert object if not.
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-clearLastResult"></a>}}
-\if{latex}{\out{\hypertarget{method-clearLastResult}{}}}
+\if{html}{\out{<a id="method-RSQL-clearLastResult"></a>}}
+\if{latex}{\out{\hypertarget{method-RSQL-clearLastResult}{}}}
 \subsection{Method \code{clearLastResult()}}{
 clearLast Result for avoiding nasty warning
 getSummary
@@ -520,8 +539,8 @@ getSummary
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-getSummary"></a>}}
-\if{latex}{\out{\hypertarget{method-getSummary}{}}}
+\if{html}{\out{<a id="method-RSQL-getSummary"></a>}}
+\if{latex}{\out{\hypertarget{method-RSQL-getSummary}{}}}
 \subsection{Method \code{getSummary()}}{
 get RSQL summary string
 \subsection{Usage}{
@@ -530,8 +549,8 @@ get RSQL summary string
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-disconnect"></a>}}
-\if{latex}{\out{\hypertarget{method-disconnect}{}}}
+\if{html}{\out{<a id="method-RSQL-disconnect"></a>}}
+\if{latex}{\out{\hypertarget{method-RSQL-disconnect}{}}}
 \subsection{Method \code{disconnect()}}{
 Disconnects the instance from the database
 \subsection{Usage}{
@@ -540,8 +559,8 @@ Disconnects the instance from the database
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-clone"></a>}}
-\if{latex}{\out{\hypertarget{method-clone}{}}}
+\if{html}{\out{<a id="method-RSQL-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-RSQL-clone}{}}}
 \subsection{Method \code{clone()}}{
 The objects of this class are cloneable with this method.
 \subsection{Usage}{

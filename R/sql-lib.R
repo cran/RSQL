@@ -86,6 +86,8 @@ RSQL.class <- R6::R6Class("RSQL", public = list(
   command.counter = 0,
   #' @field clear.rs.counter   An instance clear.rs.counter
   clear.rs.counter = 0,
+  #' @field tz local timezone
+  tz = NA,
   #' @field logger is conigured logger for current class
   logger = NA,
   #' @description
@@ -96,20 +98,37 @@ RSQL.class <- R6::R6Class("RSQL", public = list(
   #' @param password password
   #' @param host host name
   #' @param port port number
+  #' @param tz   actual time zone
   initialize = function(drv, dbname,
-                        user = NULL, password = NULL, host = NULL, port = NULL) {
+                        user = NULL, password = NULL, host = NULL, port = NULL,
+                        tz = Sys.timezone()) {
     self$db.name <- dbname
     self$driver <- drv
     self$user <- user
     self$password <- password
     self$host <- host
     self$port <- port
+    self$tz <- tz
+    self$logger <- genLogger(self)
+    self$checkConnection()
+    self$valid.conn
+  },
+  #' @description
+  #' Function which check if db connection is valid
+  #' @return conn object
+  checkConnection = function()
+  {
+    logger <- getLogger(self)
     self$valid.conn <- dbCanConnect(
       drv = self$driver, dbname = self$db.name,
       user = self$user, password = self$password,
       host = self$host, port = self$port
     )
-    self$logger <- genLogger(self)
+    if (!self$valid.conn){
+      str(self$valid.conn)
+      logger$warn("db connection is not valid",
+                  message = attr(self$valid.conn, "reason"))
+    }
     self$valid.conn
   },
   #' @description
@@ -120,9 +139,16 @@ RSQL.class <- R6::R6Class("RSQL", public = list(
       if (!self$valid.conn) {
         stop("Database connection is not valid. Check status and credentials!")
       }
+      timezone.statement <- ""
+      # Postgres
+      if (inherits(self$driver, "PqDriver")){
+        #timezone.statement <- paste("-c timezone=", Sys.timezone(), "", sep = "")
+      }
       self$conn <- dbConnect(
         drv = self$driver, dbname = self$db.name,
-        user = self$user, password = self$password, host = self$host, port = self$port
+        user = self$user, password = self$password, host = self$host, port = self$port,
+        options = timezone.statement,
+        timezone = Sys.timezone()
       )
       self$setupResultClassFromDriver()
     }
@@ -144,6 +170,10 @@ RSQL.class <- R6::R6Class("RSQL", public = list(
     # Postgres
     if (inherits(self$driver, "PqDriver")){
       self$results.class <- "PqResult"
+    }
+    # Postgres
+    if (inherits(self$driver, "MySQLDriver")){
+      self$results.class <- "MySQLResult"
     }
     if (is.null(self$results.class)){
       logger$warn("Driver Result class not implemented yet", driver = class(self$driver))
@@ -737,6 +767,48 @@ stuff_df_quoted <- function(text.df) {
   text.df
 }
 
+
+#' is.POSIXct
+#' @description
+#' This function returns true if x is a POSIXct object type
+#'
+#' @param x value to be checked as a POSIXct
+#' @author ken4rab
+is.POSIXct <- function(x) inherits(x, "POSIXct")
+
+#' times_to_utc
+#' @description
+#' This function converts POSIXct columns to UTC for inserting in a database
+#'
+#' @param values.df Data Frame with corresponding values and fields as colnames
+#' @author ken4rab
+times_to_utc <- function(values.df)
+{
+  if (nrow(values.df) > 0){
+    for (cc in names(values.df))
+    {
+      if(is.POSIXct(values.df[1,cc]))
+      {
+        values.df[, cc] <- as.POSIXct(values.df[, cc], tz = "UTC")
+      }
+    }
+  }
+  values.df
+}
+
+#' assessRSqlDf
+#' @description
+#' This function prepares data frame to be inserted in a db
+#'
+#' @param values.df Data Frame with corresponding values and fields as colnames
+#' @author ken4rab
+assessRSqlDf <- function(values.df)
+{
+  values.df <- times_to_utc(values.df)
+  values.df <- stuff_df_quoted(text.df = values.df)
+  values.df
+}
+
 #' rm_vector_quotes
 #' @description
 #' Removes quotes from data.frame columns
@@ -770,7 +842,8 @@ add_grep_exact_match <- function(text) {
 sql_gen_delete <- function(table, where_fields = names(where_values), where_values = NULL) {
   where_values.df <- as.data.frame(where_values)
   names(where_values.df) <- where_fields
-  where_values.df <- stuff_df_quoted(where_values.df)
+  #where_values.df <- stuff_df_quoted(where_values.df)
+  where_values.df <- assessRSqlDf(where_values.df)
   sql_where <- sql_gen_where(where_fields, where_values.df)
   ret <- paste("delete from", table, sql_where)
   ret
@@ -800,7 +873,8 @@ sql_gen_select <- function(select_fields, table,
   names(where_values.df) <- where_fields
 
 
-  where_values.df <- stuff_df_quoted(where_values.df)
+  #where_values.df <- stuff_df_quoted(where_values.df)
+  where_values.df <- assessRSqlDf(where_values.df)
 
   separator <- ""
   sql_select_fields <- ""
@@ -1018,7 +1092,9 @@ sql_gen_where_or <- function(where_fields = names(where_values), where_values) {
 sql_gen_insert <- function(table, values_df, insert_fields = names(values_df)) {
   values.df <- as.data.frame(values_df)
   names(values.df) <- insert_fields
-  values.df <- stuff_df_quoted(values.df)
+  values.df <- assessRSqlDf(values.df)
+  #values.df <- times_to_utc(values.df)
+  #values.df <- stuff_df_quoted(values.df)
   if (length(values_df) > 1 & !inherits(values_df, "data.frame")) {
     stop("Values must be defined as data.frames with same size of columns")
   }
@@ -1095,10 +1171,14 @@ sql_gen_update <- function(table, update_fields = names(values), values, where_f
 
   values.df <- as.data.frame(values)
   names(values.df) <- update_fields
-  values.df <- stuff_df_quoted(text.df = values.df)
+  values.df <- assessRSqlDf(values.df)
+  #values.df <- stuff_df_quoted(text.df = values.df)
+  #values.df <- times_to_utc(values.df)
+
   where_values.df <- as.data.frame(where_values)
   names(where_values.df) <- where_fields
-  where_values.df <- stuff_df_quoted(text.df = where_values.df)
+  #where_values.df <- stuff_df_quoted(text.df = where_values.df)
+  where_values.df <- assessRSqlDf(where_values.df)
   sql_where <- sql_gen_where(where_fields, where_values.df)
   update.fields.sql <- paste(update_fields, collapse = ",")
   update.values.sql <- paste(add_quotes(values.df), collapse = ",")
@@ -1207,12 +1287,12 @@ sql_retrieve <- function(table, fields_uk = names(values_uk), values_uk,
   ret <- NULL
   values_uk <- as.data.frame(values_uk)
   names(values_uk) <- fields_uk
-  values_uk <- stuff_df_quoted(text.df = values_uk)
+  #values_uk <- stuff_df_quoted(text.df = values_uk)
+  values_uk <- assessRSqlDf(values.df = values_uk)
 
   if (!is.null(values)) {
     values <- as.data.frame(values)
     names(values) <- fields
-
     values <- stuff_df_quoted(text.df = values)
   }
 
@@ -1252,8 +1332,10 @@ sql_retrieve_insert <- function(table, fields_uk = names(values_uk), values_uk,
   names(values_uk) <- fields_uk
   values <- as.data.frame(values)
   names(values) <- fields
-  values_uk <- stuff_df_quoted(text.df = values_uk)
-  values <- stuff_df_quoted(text.df = values)
+  values_uk <- assessRSqlDf(values.df = values_uk)
+  values <- assessRSqlDf(values.df = values)
+  #values_uk <- stuff_df_quoted(text.df = values_uk)
+  #values <- stuff_df_quoted(text.df = values)
 
   if (nrow(values) > 0 & nrow(values) != nrow(values_uk)) {
     stop(paste(gettext("sql_lib.error_nrows_values_uk_neq_nrows_values", domain = "R-rsql"), nrow(values_uk), nrow(values)))
